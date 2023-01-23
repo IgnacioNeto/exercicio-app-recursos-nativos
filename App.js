@@ -12,13 +12,10 @@ import {
 
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import * as ImagePicker from "expo-image-picker";
 
 export default function App() {
   const [texto, onChangeText] = useState("Titulo da foto/local");
   const [minhaLocalizacao, setMinhaLocalizacao] = useState(null);
-  const [status, requestPermission] = ImagePicker.useCameraPermissions();
-  const [foto, setFoto] = useState();
 
   useEffect(() => {
     async function obterLocalizacao() {
@@ -45,48 +42,11 @@ export default function App() {
       longitudeDelta: 0.0012,
     });
   };
-  useEffect(() => {
-    async function verPermissoes() {
-      const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
-      requestPermission(cameraStatus === "granted");
-    }
-
-    verPermissoes();
-  }, []);
-  const acessaCamera = async () => {
-    const imagem = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    });
-
-    console.log(imagem);
-    setFoto(imagem.assets[0].uri);
-  };
-
   return (
     <View style={styles.container}>
       <SafeAreaView>
         <StatusBar animated={true} backgroundColor="black" />
-        <Text style={styles.texto}>App 1 - Fotos de lugares visitados</Text>
-        <View style={styles.caixa}>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText}
-            value={texto}
-          />
-          <View style={styles.view}>
-            {foto && (
-              <Image
-                source={{ uri: foto }}
-                style={{ width: 350, height: 200 }}
-              />
-            )}
-          </View>
-          <Pressable style={styles.botao} onPress={acessaCamera}>
-            <Text style={styles.textoBotao}>Tirar foto</Text>
-          </Pressable>
-        </View>
+        <Text style={styles.texto}>App 2 - Marcação de Ponto</Text>
         <View style={styles.caixa}>
           <View style={styles.view}>
             <MapView
@@ -99,8 +59,9 @@ export default function App() {
               )}
             </MapView>
           </View>
+          <Text style={styles.data}>10:00 - 23/01/2023</Text>
           <Pressable style={styles.botao} onPress={novaLocalizacao}>
-            <Text style={styles.textoBotao}>localizar no mapa</Text>
+            <Text style={styles.textoBotao}>Marcar</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -115,7 +76,15 @@ const styles = StyleSheet.create({
   },
   texto: {
     textAlign: "center",
-    fontSize: 18,
+    fontSize: 22,
+    height: 100,
+    paddingTop: 20
+  },
+  data: {
+    textAlign: "center",
+    fontSize: 26,
+    height: 70,
+    paddingTop: 30
   },
   caixa: {
     width: 400,
@@ -134,10 +103,12 @@ const styles = StyleSheet.create({
     backgroundColor: "gray",
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 2,
   },
   map: {
     width: "100%",
     height: "100%",
+  
   },
   botao: {
     height: 40,
@@ -147,6 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 4,
     backgroundColor: "gray",
+    borderWidth: 2,
   },
   textoBotao: {
     fontSize: 20,
