@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -10,6 +11,7 @@ import {
   Image,
 } from "react-native";
 
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
@@ -44,7 +46,25 @@ export default function App() {
       latitudeDelta: 0.0052,
       longitudeDelta: 0.0012,
     });
+    marcacaoConfirmada();
+    // Alert.alert("Alert Title", "My Alert Msg", [
+    //   { text: "OK", onPress: () => console.log("OK Pressed") },
+    // ]);
+    console.log(localizacao);
   };
+
+  const marcacaoConfirmada = () => {
+    Alert.alert("Marcação registrada com sucesso!", "corpo...", [
+      {
+        text: "OK",
+        onPress: () => {
+          return false;
+        },
+        style: "cancel", //somente ios
+      },
+    ]);
+  };
+
   useEffect(() => {
     async function verPermissoes() {
       const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();

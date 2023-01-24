@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let latitude = -23.5262695;
+    //  let latitude = minhaLocalizacao.coords.latitude;
+      let longitude = -46.5400998;
+      fetch(
+        `https://nominatim.openstreetmap.org/reverse.php?lat=${latitude}&lon=${longitude}&zoom=18&format=jsonv2`
+        //`https://nominatim.openstreetmap.org/ui/reverse.html?lat=${latitude}&lon=${longitude}&zoom=18`
+      )
+        .then((resposta) => resposta.json())
+        .then((dados) => {
+          console.log(dados);
+        });
+    </script>
+  </body>
+</html>
