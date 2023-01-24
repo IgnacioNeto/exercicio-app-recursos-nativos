@@ -46,15 +46,30 @@ export default function App() {
       latitudeDelta: 0.0052,
       longitudeDelta: 0.0012,
     });
-    marcacaoConfirmada();
-    // Alert.alert("Alert Title", "My Alert Msg", [
-    //   { text: "OK", onPress: () => console.log("OK Pressed") },
-    // ]);
-    console.log(localizacao);
+
+    fetch(
+      `https://nominatim.openstreetmap.org/reverse.php?lat=${minhaLocalizacao.coords.latitude}&lon=${minhaLocalizacao.coords.longitude}&zoom=18&format=jsonv2`
+    )
+      .then((resposta) => resposta.json())
+      .then((dados) => {
+        console.log(dados.address.road);
+        //marcacaoConfirmada();
+        Alert.alert("Sucesso", `Endereço: ${dados.address.road}`, [
+          {
+            text: "OK",
+            onPress: () => {
+              return false;
+            },
+            style: "cancel", //somente ios
+          },
+        ]);
+      });
   };
 
+  //console.log(localizacao.display_name);
+
   const marcacaoConfirmada = () => {
-    Alert.alert("Marcação registrada com sucesso!", "corpo...", [
+    Alert.alert("Marcação registrada com sucesso!", `No endereço  `, [
       {
         text: "OK",
         onPress: () => {
@@ -65,30 +80,22 @@ export default function App() {
     ]);
   };
 
-  useEffect(() => {
-    async function verPermissoes() {
-      const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
-      requestPermission(cameraStatus === "granted");
-    }
-
-    verPermissoes();
-  }, []);
-  const acessaCamera = async () => {
-    const imagem = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    });
-
-    console.log(imagem);
-    setFoto(imagem.assets[0].uri);
-  };
-
   /* Recupera Hora e Data Atual (aplica formatação) */
   let dataHora = new Date();
+  /* hora */
+  let hora = dataHora.getHours().toString();
+  let horaF = hora.length == 1 ? "0" + hora : hora;
+  /* minuto */
+  let minuto = dataHora.getMinutes().toString();
+  let minutoF = minuto.length == 1 ? "0" + minuto : minuto;
+  /* dia */
+  let dia = dataHora.getDate().toString();
+  let diaF = dia.length == 1 ? "0" + dia : dia;
+  /* mes */
   let mes = dataHora.getMonth().toString() + 1;
   let mesF = mes.length == 1 ? "0" + mes : mes;
-  let horaAtual = `${dataHora.getHours()}:${dataHora.getMinutes()} - ${dataHora.getDate()}/${mesF}/${dataHora.getFullYear()}`;
+  /* concatena as variáveis */
+  let horaAtual = `${horaF}:${minutoF} - ${diaF}/${mesF}/${dataHora.getFullYear()}`;
 
   return (
     <View style={styles.container}>
