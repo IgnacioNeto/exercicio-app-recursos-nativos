@@ -12,10 +12,13 @@ import {
 
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
+import * as ImagePicker from "expo-image-picker";
 
 export default function App() {
   const [texto, onChangeText] = useState("Titulo da foto/local");
   const [minhaLocalizacao, setMinhaLocalizacao] = useState(null);
+  const [status, requestPermission] = ImagePicker.useCameraPermissions();
+  const [foto, setFoto] = useState();
 
   useEffect(() => {
     async function obterLocalizacao() {
@@ -42,11 +45,37 @@ export default function App() {
       longitudeDelta: 0.0012,
     });
   };
+  useEffect(() => {
+    async function verPermissoes() {
+      const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
+      requestPermission(cameraStatus === "granted");
+    }
+
+    verPermissoes();
+  }, []);
+  const acessaCamera = async () => {
+    const imagem = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    console.log(imagem);
+    setFoto(imagem.assets[0].uri);
+  };
+
+  /* Recupera Hora e Data Atual (aplica formatação) */
+  let dataHora = new Date();
+  let mes = dataHora.getMonth().toString() + 1;
+  let mesF = mes.length == 1 ? "0" + mes : mes;
+  let horaAtual = `${dataHora.getHours()}:${dataHora.getMinutes()} - ${dataHora.getDate()}/${mesF}/${dataHora.getFullYear()}`;
+
   return (
     <View style={styles.container}>
       <SafeAreaView>
         <StatusBar animated={true} backgroundColor="black" />
-        <Text style={styles.texto}>App 2 - Marcação de Ponto</Text>
+        <Text style={styles.texto}>App 2 - Marcação de Pontos</Text>
+
         <View style={styles.caixa}>
           <View style={styles.view}>
             <MapView
@@ -59,7 +88,8 @@ export default function App() {
               )}
             </MapView>
           </View>
-          <Text style={styles.data}>10:00 - 23/01/2023</Text>
+          <Text style={styles.dataHora}>{horaAtual}</Text>
+
           <Pressable style={styles.botao} onPress={novaLocalizacao}>
             <Text style={styles.textoBotao}>Marcar</Text>
           </Pressable>
@@ -74,29 +104,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   texto: {
     textAlign: "center",
     fontSize: 22,
-    height: 100,
-    paddingTop: 20
+    marginTop: 20,
+    marginBottom: 40,
   },
-  data: {
+
+  dataHora: {
     textAlign: "center",
     fontSize: 26,
-    height: 70,
-    paddingTop: 30
+    paddingTop: 30,
+    paddingBottom: 30,
+    color: "blue",
   },
+
   caixa: {
     width: 400,
     alignItems: "center",
   },
-  input: {
-    height: 60,
-    width: 350,
-    margin: 30,
-    borderWidth: 1,
-    padding: 10,
-  },
+
   view: {
     height: 200,
     width: 350,
@@ -104,22 +132,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
+    borderRadius: 4,
   },
+
   map: {
     width: "100%",
     height: "100%",
-  
   },
+
   botao: {
     height: 40,
     width: 350,
     marginVertical: 20,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 4,
     backgroundColor: "gray",
     borderWidth: 2,
+    borderRadius: 4,
   },
+
   textoBotao: {
     fontSize: 20,
   },
